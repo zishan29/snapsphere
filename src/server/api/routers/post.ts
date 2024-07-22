@@ -13,19 +13,24 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(
+      z.object({
+        content: z.string(),
+        user_id: z.string(),
+        post_img_url: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       await ctx.db.insert(posts).values({
-        name: input.name,
+        content: input.content,
+        user_id: input.user_id,
+        post_image_url: input.post_img_url ? input.post_img_url : "",
       });
     }),
 
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.posts.findFirst({
-      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+  getAll: publicProcedure.query(({ ctx }) => {
+    return ctx.db.query.posts.findMany({
+      orderBy: (model, { desc }) => [desc(model.post_date)],
     });
   }),
 });
