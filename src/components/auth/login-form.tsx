@@ -8,8 +8,6 @@ import { CardWrapper } from "~/components/auth/card-wrapper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
-import { login } from "~/actions/login";
-
 import {
   Form,
   FormControl,
@@ -22,6 +20,7 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/form-error";
 import { FormSuccess } from "~/components/form-success";
+import { login } from "~/actions/login";
 
 export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -41,8 +40,10 @@ export const LoginForm = () => {
 
     startTransition(async () => {
       const data = await login(values);
-      setError(data.error);
-      setSuccess(data.success);
+      if (data !== undefined) {
+        setError(data.error);
+        setSuccess(data.success);
+      }
     });
   };
 
