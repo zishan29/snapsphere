@@ -1,5 +1,6 @@
 import { Button } from "~/components/ui/button";
 import { signOut } from "~/server/auth";
+import { redirect } from "next/navigation";
 
 export default function TopNav() {
   return (
@@ -9,6 +10,7 @@ export default function TopNav() {
         action={async () => {
           "use server";
           await signOut();
+          redirect("/auth/login");
         }}
       >
         <Button type="submit" variant="secondary">

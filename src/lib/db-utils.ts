@@ -10,7 +10,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const getUserById = async (id: string) => {
   const user = await db.query.users.findFirst({
-    where: (model, { eq }) => eq(model.user_id, id),
+    where: (model, { eq }) => eq(model.id, id),
   });
 
   return user;

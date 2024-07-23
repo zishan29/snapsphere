@@ -1,15 +1,14 @@
-import { integer, text, primaryKey } from "drizzle-orm/pg-core";
+import { integer, text, primaryKey, pgTable } from "drizzle-orm/pg-core";
 
-import { createTable } from "./table-creator";
 import { relations } from "drizzle-orm";
 import { users } from "./users";
 
-export const accounts = createTable(
-  "accounts",
+export const accounts = pgTable(
+  "account",
   {
-    user_id: text("user_id")
+    userId: text("userId")
       .notNull()
-      .references(() => users.user_id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -30,7 +29,7 @@ export const accounts = createTable(
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, {
-    fields: [accounts.user_id],
-    references: [users.user_id],
+    fields: [accounts.userId],
+    references: [users.id],
   }),
 }));

@@ -8,7 +8,7 @@ export const LoginSchema = z.object({
 });
 
 export const RegisterSchema = z.object({
-  username: z
+  name: z
     .string()
     .min(3, { message: "Username must contain at least 3 character(s)" }),
   email: z.string().email({ message: "Email is required" }),
