@@ -1,8 +1,11 @@
 "use server";
 
-import { api } from "~/trpc/server";
 import type * as z from "zod";
 import { RegisterSchema } from "~/schemas";
+import bcrypt from "bcryptjs";
+import { db } from "~/server/db";
+import { users } from "~/server/db/schema";
+import { getUserByEmail } from "~/data/user";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -11,10 +14,21 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Invalid fields!" };
   }
 
-  const response = await api.user.create(validatedFields.data);
-  if (response.success) {
-    return { success: "User created!" };
+  const { name, email, password } = validatedFields.data;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const existingUser = await getUserByEmail(email);
+
+  if (existingUser) {
+    return { error: "Email already in use!" };
   }
 
-  return { error: response.error };
+  await db.insert(users).values({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  return { success: "User created!" };
 };
